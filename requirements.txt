@@ -2,7 +2,7 @@ streamlit
 pandas
 scikit-learn
 librosa
-tensorflow
+tensorflow-cpu
 joblib
 opencv-python-headless
 Pillow
