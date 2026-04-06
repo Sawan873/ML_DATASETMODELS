@@ -308,15 +308,15 @@ def render_video():
                     pred = model.predict(img, verbose=0)[0][0]
                     predictions.append(pred)
                     
-                    # Highlight Robbery if pred > 0.1
-                    if pred > 0.1:
+                    # Highlight Robbery if pred > 0.65 (Standard Stability Threshold)
+                    if pred > 0.65:
                         # Draw a thick glowing red rectangle around the frame center (or full frame)
                         h, w = frame.shape[:2]
                         cv2.rectangle(frame, (20, 20), (w-20, h-20), (0, 0, 255), 6)
                         cv2.putText(frame, f"🛑 ROBBERY ACTIVITY: {(pred*100):.1f}%", (40, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
                         status_text.error("🚨 SUSPICIOUS ACTIVITY DETECTED IN FRAME!")
                     else:
-                        status_text.success("✅ Normal Activity")
+                        status_text.success(f"✅ Normal Activity (No Risks)")
                         
                     # stream the frame dynamically on screen!
                     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -326,11 +326,12 @@ def render_video():
                 
             cap.release()
             
-            high_preds = [p for p in predictions if p > 0.1]
-            if len(high_preds) > 5:
+            # Final Verdict requires sustained true positives over multiple frames
+            high_preds = [p for p in predictions if p > 0.65]
+            if len(high_preds) > 8:
                 st.error(f"🛑 FINAL VERDICT: **SHOPLIFTING DETECTED** ({len(high_preds)} high-risk frames recorded)")
             else:
-                st.success("✅ FINAL VERDICT: NORMAL ACTIVITY")
+                st.success(f"✅ FINAL VERDICT: NORMAL ACTIVITY (Maximum risk frames: {len(high_preds)})")
 
 
 # ------------------------------------------------------------
