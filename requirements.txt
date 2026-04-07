@@ -6,3 +6,5 @@ tensorflow-cpu
 joblib
 opencv-python-headless
 Pillow
+torch
+torchvision
